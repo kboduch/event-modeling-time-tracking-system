@@ -1,0 +1,38 @@
+version: '3.4'
+
+x-cache-from:
+  - &api-cache-from
+    cache_from:
+      - ${NGINX_IMAGE:-quay.io/api-platform/nginx}
+      - ${PHP_IMAGE:-quay.io/api-platform/php}
+
+services:
+  php:
+    build:
+      context: .
+      target: api_platform_php
+      <<: *api-cache-from
+    image: ${PHP_IMAGE:-quay.io/api-platform/php}
+    volumes:
+      - ./:/srv/api:rw,cached
+      - ./docker/php/conf.d/api-platform.dev.ini/:/usr/local/etc/php/conf.d/api-platform.ini
+      # if you develop on Linux, you may use a bind-mounted host directory instead
+      # - ./var:/srv/api/var:rw
+
+  api:
+    build:
+      context: .
+      target: api_platform_nginx
+      <<: *api-cache-from
+    image: ${NGINX_IMAGE:-quay.io/api-platform/nginx}
+    depends_on:
+      - php
+    volumes:
+      - ./public:/srv/api/public:ro
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+
+volumes:
+  db-data: {}

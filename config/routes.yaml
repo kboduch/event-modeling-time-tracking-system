@@ -1,3 +1,7 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+timesheet_reject:
+  path: /timesheets/{id}/reject
+  controller: App\TimeSheet\Controller\RejectTimeSheetController
+  methods: POST
+  requirements:
+    id: '\w+-\d{4}-\d{2}-\d{2}-[a-z-]+'
+    #todo verify id format

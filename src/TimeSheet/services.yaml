@@ -1,0 +1,27 @@
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # controllers are imported separately to make sure services can be injected
+  # as action arguments even if you don't extend any base controller class
+
+
+  # add more service definitions when explicit configuration is needed
+  # please note that last definitions always *replace* previous ones
+
+  # put this after the "App\" line that registers all your services
+  command_handlers:
+    namespace: App\TimeSheet\Handler\
+    resource: '%kernel.project_dir%/src/TimeSheet/Handler/*CommandHandler.php'
+    autoconfigure: false
+    tags:
+      - { name: messenger.message_handler, bus: command.bus }
+
+  query_handlers:
+    namespace: App\TimeSheet\Handler\
+    resource: '%kernel.project_dir%/src/TimeSheet/Handler/*QueryHandler.php'
+    autoconfigure: false
+    tags:
+      - { name: messenger.message_handler, bus: query.bus }
