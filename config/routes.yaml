@@ -4,4 +4,3 @@ timesheet_reject:
   methods: POST
   requirements:
     id: '\w+-\d{4}-\d{2}-\d{2}-[a-z-]+'
-    #todo verify id format

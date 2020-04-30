@@ -6,15 +6,24 @@ namespace App\TimeSheet\Command;
 final class RejectTimeSheetCommand
 {
     /** @var string */
-    private $timeSheetId;
+    private $userId;
 
     /** @var string */
+    private $timeSheetId;
+
+    /** @var null|string */
     private $reason;
 
-    public function __construct(string $timeSheetId, string $reason)
+    public function __construct(string $userId, string $timeSheetId, ?string $reason)
     {
+        $this->userId = $userId;
         $this->timeSheetId = $timeSheetId;
         $this->reason = $reason;
+    }
+
+    public function getUserId(): string
+    {
+        return $this->userId;
     }
 
     public function getTimeSheetId(): string
@@ -22,7 +31,7 @@ final class RejectTimeSheetCommand
         return $this->timeSheetId;
     }
 
-    public function getReason(): string
+    public function getReason(): ?string
     {
         return $this->reason;
     }

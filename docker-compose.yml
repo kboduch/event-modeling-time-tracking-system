@@ -16,8 +16,9 @@ services:
     volumes:
       - ./:/srv/api:rw,cached
       - ./docker/php/conf.d/api-platform.dev.ini/:/usr/local/etc/php/conf.d/api-platform.ini
-      # if you develop on Linux, you may use a bind-mounted host directory instead
-      # - ./var:/srv/api/var:rw
+      - ${HOST_EVENTS_DIR:-./../time_tracking_system_events}:${CONTAINER_EVENTS_DIR:-/srv/events}:rw
+    environment:
+      - EVENTS_DIRECTORY=${CONTAINER_EVENTS_DIR:-/srv/events}
 
   api:
     build:
@@ -31,7 +32,7 @@ services:
       - ./public:/srv/api/public:ro
     ports:
       - target: 80
-        published: 8080
+        published: 8000
         protocol: tcp
 
 volumes:

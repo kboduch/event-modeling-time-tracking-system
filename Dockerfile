@@ -116,13 +116,6 @@ WORKDIR /srv/api/public
 
 COPY --from=api_platform_php /srv/api/public ./
 
-
-# "varnish" stage
-# does not depend on any of the above stages, but placed here to keep everything in one Dockerfile
-FROM cooptilleuls/varnish:${VARNISH_VERSION}-alpine AS api_platform_varnish
-
-COPY docker/varnish/conf/default.vcl /usr/local/etc/varnish/default.vcl
-
 FROM api_platform_php as api_platform_php_dev
 
 ARG XDEBUG_VERSION=2.7.2

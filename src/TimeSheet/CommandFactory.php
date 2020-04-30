@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\TimeSheet;
 
+use App\Shared\Exceptions\ValidationException;
 use App\TimeSheet\Command\RejectTimeSheetCommand;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
@@ -19,33 +21,41 @@ final class CommandFactory
         $this->validator = $validator;
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return RejectTimeSheetCommand
+     *
+     * @throws ValidationException|Exception
+     */
     public function createRejectTimeSheetCommandFromRequest(Request $request): RejectTimeSheetCommand
     {
         $timeSheetId = $request->get('id', '');
         $reason = $request->get('reason', '');
+
         $errors = $this->validator->validate(
             $timeSheetId,
             [
-                new NotBlank(),
-                new Type(['type' => 'string'])
-                //todo id format validation?
+                new NotBlank(['message' => 'TimeSheet id should not be blank']),
+                new Type(['type' => 'string', 'message' => 'Id should be type of string']),
             ]
-
         );
 
         $errors->addAll(
             $this->validator->validate(
                 $reason,
                 [
-                    new Type(['type' => 'string']),
+                    new Type(['type' => 'string', 'message' => 'Reason should be type of string']),
                 ]
             )
         );
 
         if ($errors->count() > 0) {
-            throw new \Exception(); //todo replace with dedicated exception
+            throw new ValidationException($errors);
         }
 
-        return new RejectTimeSheetCommand($timeSheetId, $reason);
+        $userId = (string)random_int(1, 100); //authenticated user
+
+        return new RejectTimeSheetCommand($userId, $timeSheetId, $reason);
     }
 }
